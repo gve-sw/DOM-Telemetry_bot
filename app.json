@@ -1,0 +1,9 @@
+{
+  "stack": "heroku-20",
+  "description": "Webex Bot to notify about DOM alerts",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
