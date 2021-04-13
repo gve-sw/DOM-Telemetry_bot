@@ -39,15 +39,21 @@ def alert_received():
         api.messages.create(roomId=WT_ROOM_ID, markdown=notification_alert)
 
         evalMatches = raw_json['evalMatches']
+        messages = []
         for match in evalMatches:
-            threshold_value = round(match['value'], 3)
-            device = match['tags']['host']
-            interface = match['tags']['interface']
-            media_type = match['tags']['media_type']
-            matches = (
-                f"🔔 {media_type} at {interface} on {device} reached a value of {threshold_value}."
-            )
-            api.messages.create(roomId=WT_ROOM_ID, markdown=matches)
+            exists = False
+            for message in messages:
+                if match['tags']['host'] == message['device']:
+                    exists = True
+                    break
+            if exists == False:
+                threshold_value = round(match['value'], 3)
+                device = match['tags']['host']
+                media_type = match['tags']['media_type']
+                matches = (f"🔔 {media_type} at {device} reached a value of {threshold_value}.")
+                message_add = {"threshold_value": threshold_value, "device": device, "media_type": media_type}
+                messages.append(message_add)
+                api.messages.create(roomId=WT_ROOM_ID, markdown=matches)
 
     return jsonify({'success': True})
 
